@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+import 'package:tic_tac_toe/anim/left_to_right_anim.dart';
+import 'package:tic_tac_toe/anim/right_to_left_anim.dart';
+import 'package:tic_tac_toe/anim/scale_anim.dart';
+import 'package:tic_tac_toe/anim/up_to_down_fade_anim.dart';
 
 class GamePage extends StatefulWidget {
   const GamePage(
@@ -73,50 +78,59 @@ class _GamePageState extends State<GamePage> {
     return Row(
       children: [
         Expanded(
-          child: Container(
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: Colors.transparent,
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: Colors.white),
+          child: LeftToRightAnim(
+            milliSecond: 500,
+            child: Container(
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: Colors.transparent,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: Colors.white),
+              ),
+              child: Text(
+                '${widget.player1} : $player1Score',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
+          ),
+        ),
+        Expanded(
+          child: UpToDownFadeAnim(
+            milliSecond: 0,
             child: Text(
-              '${widget.player1} : $player1Score',
+              'VS',
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: Colors.white,
-                fontSize: 20,
+                fontSize: 26,
                 fontWeight: FontWeight.bold,
               ),
             ),
           ),
         ),
         Expanded(
-          child: Text(
-            'VS',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 26,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-        Expanded(
-          child: Container(
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: Colors.transparent,
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: Colors.white),
-            ),
-            child: Text(
-              '${widget.player2} : $player2Score',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
+          child: RightToLeftAnim(
+            milliSecond: 500,
+            child: Container(
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: Colors.transparent,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: Colors.white),
+              ),
+              child: Text(
+                '${widget.player2} : $player2Score',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ),
@@ -126,30 +140,33 @@ class _GamePageState extends State<GamePage> {
   }
 
   Widget _getTurn() {
-    return Container(
-      width: 200,
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        color: Colors.transparent,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Colors.white),
-      ),
-      child: Text(
-        playerTurn == 1
-            ? '${widget.player1} \'s TURN'
-            : '${widget.player2} \'s TURN',
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 20,
-          fontWeight: FontWeight.bold,
+    return UpToDownFadeAnim(
+      milliSecond: 1000,
+      child: Container(
+        width: 200,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: Colors.transparent,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: Colors.white),
+        ),
+        child: Text(
+          playerTurn == 1
+              ? '${widget.player1} \'s TURN'
+              : '${widget.player2} \'s TURN',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
     );
   }
 
   Widget _getWon() {
-    return Visibility(
-      visible: playerWon != '' ? true : false,
+    return ScaleAnim(
+      isWin: playerWon != '' ? true : false,
       child: Container(
         width: 300,
         alignment: Alignment.center,
@@ -172,83 +189,122 @@ class _GamePageState extends State<GamePage> {
 
   Widget _getSquars() {
     if (widget.difficult == 0) {
-      return GridView.builder(
-        itemCount: 9,
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
-        ),
-        itemBuilder: (context, index) {
-          return GestureDetector(
-            onTap: () => gameRole(index),
-            child: Container(
-              padding: EdgeInsets.all(15),
-              decoration: BoxDecoration(
-                color: Colors.grey.withOpacity(0.3),
-                border: Border.all(color: Colors.white),
-                borderRadius: BorderRadius.circular(20),
+      return AnimationLimiter(
+        child: GridView.builder(
+          itemCount: 9,
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 3,
+          ),
+          itemBuilder: (context, index) {
+            return AnimationConfiguration.staggeredGrid(
+              position: index,
+              duration: const Duration(milliseconds: 1300),
+              columnCount: 3,
+              child: ScaleAnimation(
+                child: FadeInAnimation(
+                  child: GestureDetector(
+                    onTap: () => gameRole(index),
+                    child: Container(
+                      padding: EdgeInsets.all(15),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.withOpacity(0.3),
+                        border: Border.all(color: Colors.white),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: ScaleAnim(
+                        isWin: selects[index] != '' ? true : false,
+                        child: selects[index] != ''
+                            ? Image.asset('assets/images/${selects[index]}.png')
+                            : SizedBox(),
+                      ),
+                    ),
+                  ),
+                ),
               ),
-              child: selects[index] != ''
-                  ? Image(
-                      image: AssetImage('assets/images/${selects[index]}.png'))
-                  : SizedBox(),
-            ),
-          );
-        },
+            );
+          },
+        ),
       );
     } else if (widget.difficult == 1) {
-      return GridView.builder(
-        itemCount: 25,
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 5,
-        ),
-        itemBuilder: (context, index) {
-          return GestureDetector(
-            onTap: () => gameRole(index),
-            child: Container(
-              padding: EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: Colors.grey.withOpacity(0.3),
-                border: Border.all(color: Colors.white),
-                borderRadius: BorderRadius.circular(20),
+      return AnimationLimiter(
+        child: GridView.builder(
+          itemCount: 25,
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 5,
+          ),
+          itemBuilder: (context, index) {
+            return AnimationConfiguration.staggeredGrid(
+              position: index,
+              duration: const Duration(milliseconds: 1100),
+              columnCount: 5,
+              child: ScaleAnimation(
+                child: FadeInAnimation(
+                  child: GestureDetector(
+                    onTap: () => gameRole(index),
+                    child: Container(
+                      padding: EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.withOpacity(0.3),
+                        border: Border.all(color: Colors.white),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: ScaleAnim(
+                        isWin: selects[index] != '' ? true : false,
+                        child: selects[index] != ''
+                            ? Image.asset('assets/images/${selects[index]}.png')
+                            : SizedBox(),
+                      ),
+                    ),
+                  ),
+                ),
               ),
-              child: selects[index] != ''
-                  ? Image(
-                      image: AssetImage('assets/images/${selects[index]}.png'))
-                  : SizedBox(),
-            ),
-          );
-        },
+            );
+          },
+        ),
       );
     } else {
-      return GridView.builder(
-        itemCount: 49,
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 7,
-        ),
-        itemBuilder: (context, index) {
-          return GestureDetector(
-            onTap: () => gameRole(index),
-            child: Container(
-              padding: EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Colors.grey.withOpacity(0.3),
-                border: Border.all(color: Colors.white),
-                borderRadius: BorderRadius.circular(20),
+      return AnimationLimiter(
+        child: GridView.builder(
+          itemCount: 49,
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 7,
+          ),
+          itemBuilder: (context, index) {
+            return AnimationConfiguration.staggeredGrid(
+              position: index,
+              duration: const Duration(milliseconds: 800),
+              columnCount: 7,
+              child: ScaleAnimation(
+                child: FadeInAnimation(
+                  child: GestureDetector(
+                    onTap: () => gameRole(index),
+                    child: Container(
+                      padding: EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.withOpacity(0.3),
+                        border: Border.all(color: Colors.white),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: ScaleAnim(
+                        isWin: selects[index] != '' ? true : false,
+                        child: selects[index] != ''
+                            ? Image.asset('assets/images/${selects[index]}.png')
+                            : SizedBox(),
+                      ),
+                    ),
+                  ),
+                ),
               ),
-              child: selects[index] != ''
-                  ? Image(
-                      image: AssetImage('assets/images/${selects[index]}.png'))
-                  : SizedBox(),
-            ),
-          );
-        },
+            );
+          },
+        ),
       );
     }
   }
 
   Widget _getResetButtons() {
-    return Visibility(
-      visible: playerWon != '' ? true : false,
+    return ScaleAnim(
+      isWin: playerWon != '' ? true : false,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -256,7 +312,7 @@ class _GamePageState extends State<GamePage> {
             onPressed: () => resetMatch(),
             child: Text('Reset Match'),
             style: TextButton.styleFrom(
-              primary: Colors.white,
+              foregroundColor: Colors.white,
               side: BorderSide(
                 color: Colors.white,
               ),
@@ -271,7 +327,7 @@ class _GamePageState extends State<GamePage> {
             onPressed: () => resetGame(),
             child: Text('Reset Game'),
             style: TextButton.styleFrom(
-              primary: Colors.white,
+              foregroundColor: Colors.white,
               side: BorderSide(
                 color: Colors.white,
               ),

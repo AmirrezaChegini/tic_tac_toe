@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:tic_tac_toe/anim/up_to_down_fade_anim.dart';
 import 'package:tic_tac_toe/pages/game_page.dart';
-
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -10,18 +10,24 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  var player1Crtl = TextEditingController();
-  var player2Crtl = TextEditingController();
-  String? player1;
-  String? player2;
-  String? error;
+  var edtP1Ctrl = TextEditingController();
+  var edtP2Ctrl = TextEditingController();
+  final edtFormKey = GlobalKey<FormState>();
   List<String> difficulty = ['Easy', 'Medium', 'Hard'];
-  int? difficult;
+  int difficultSelected = -1;
   List<IconData> cardIcons = [
     Icons.circle_outlined,
     Icons.circle_outlined,
     Icons.circle_outlined
   ];
+
+  @override
+  void dispose() {
+    super.dispose();
+
+    edtP1Ctrl.dispose();
+    edtP2Ctrl.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,23 +51,29 @@ class _LoginPageState extends State<LoginPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              'Players Name',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 30,
-                fontWeight: FontWeight.bold,
+            UpToDownFadeAnim(
+              milliSecond: 500,
+              child: Text(
+                'Players Name',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
             SizedBox(height: 10),
-            _getEdtPlayer(),
+            _getEdtPlayerForm(),
             SizedBox(height: 40),
-            Text(
-              'Choose Difficulty',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 30,
-                fontWeight: FontWeight.bold,
+            UpToDownFadeAnim(
+              milliSecond: 2000,
+              child: Text(
+                'Choose Difficulty',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
             SizedBox(height: 10),
@@ -72,68 +84,89 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Widget _getEdtPlayer() {
-    return Column(
-      children: [
-        TextFormField(
-          controller: player1Crtl,
-          cursorColor: Colors.white,
-          keyboardType: TextInputType.name,
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 20,
-          ),
-          decoration: InputDecoration(
-            labelText: 'Player 1',
-            labelStyle: TextStyle(color: Colors.white),
-            enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.white),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(
+  Widget _getEdtPlayerForm() {
+    return Form(
+      key: edtFormKey,
+      child: Column(
+        children: [
+          UpToDownFadeAnim(
+            milliSecond: 1000,
+            child: TextFormField(
+              controller: edtP1Ctrl,
+              cursorColor: Colors.white,
+              keyboardType: TextInputType.name,
+              style: TextStyle(
                 color: Colors.white,
+                fontSize: 20,
               ),
-            ),
-            errorText: error,
-            errorBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.red),
-            ),
-            focusedErrorBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.red),
+              decoration: InputDecoration(
+                labelText: 'Player 1',
+                labelStyle: TextStyle(color: Colors.white),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.white),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.white,
+                  ),
+                ),
+                errorBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.red),
+                ),
+                focusedErrorBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.red),
+                ),
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter your name!!';
+                }
+                return null;
+              },
             ),
           ),
-        ),
-        SizedBox(height: 15),
-        TextFormField(
-          controller: player2Crtl,
-          cursorColor: Colors.white,
-          keyboardType: TextInputType.name,
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 20,
-          ),
-          decoration: InputDecoration(
-            labelText: 'Player 2',
-            labelStyle: TextStyle(color: Colors.white),
-            enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.white),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(
+          SizedBox(height: 15),
+          UpToDownFadeAnim(
+            milliSecond: 1500,
+            child: TextFormField(
+              controller: edtP2Ctrl,
+              cursorColor: Colors.white,
+              keyboardType: TextInputType.name,
+              style: TextStyle(
                 color: Colors.white,
+                fontSize: 20,
               ),
-            ),
-            errorText: error,
-            errorBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.red),
-            ),
-            focusedErrorBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.red),
+              decoration: InputDecoration(
+                labelText: 'Player 2',
+                labelStyle: TextStyle(color: Colors.white),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.white),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.white,
+                  ),
+                ),
+                errorBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.red),
+                ),
+                focusedErrorBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.red),
+                ),
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter your name!!';
+                } else if (value == edtP1Ctrl.text) {
+                  return 'Choose different name!!';
+                }
+                return null;
+              },
             ),
           ),
-        ),
-        SizedBox(height: 25),
-      ],
+          SizedBox(height: 25),
+        ],
+      ),
     );
   }
 
@@ -143,57 +176,47 @@ class _LoginPageState extends State<LoginPage> {
         ...List.generate(
           3,
           (index) {
-            return Container(
-              margin: EdgeInsets.symmetric(vertical: 5),
-              width: double.infinity,
-              height: 60,
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.white),
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: ListTile(
-                onTap: () {
-                  setState(() {
-                    difficult = index;
-
-                    if (index == 0) {
-                      cardIcons[0] = Icons.circle;
-                      cardIcons[1] = Icons.circle_outlined;
-                      cardIcons[2] = Icons.circle_outlined;
-                    } else if (index == 1) {
-                      cardIcons[0] = Icons.circle_outlined;
-                      cardIcons[1] = Icons.circle;
-                      cardIcons[2] = Icons.circle_outlined;
-                    } else if (index == 2) {
-                      cardIcons[0] = Icons.circle_outlined;
-                      cardIcons[1] = Icons.circle_outlined;
-                      cardIcons[2] = Icons.circle;
-                    } else {
-                      cardIcons[0] = Icons.circle_outlined;
-                      cardIcons[1] = Icons.circle_outlined;
-                      cardIcons[2] = Icons.circle_outlined;
-                    }
-                  });
-                },
-                title: Text(difficulty[index]),
-                textColor: Colors.white,
-                trailing: Icon(
-                  cardIcons[index],
-                  color: Colors.white,
+            return UpToDownFadeAnim(
+              milliSecond: 2500,
+              child: Container(
+                margin: EdgeInsets.symmetric(vertical: 5),
+                width: double.infinity,
+                height: 60,
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.white),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: ListTile(
+                  onTap: () {
+                    setState(() {
+                      difficultSelected = index;
+                    });
+                  },
+                  title: Text(difficulty[index]),
+                  textColor: Colors.white,
+                  trailing: Icon(
+                    difficultSelected == index
+                        ? Icons.circle
+                        : Icons.circle_outlined,
+                    color: Colors.white,
+                  ),
                 ),
               ),
             );
           },
         ),
         SizedBox(height: 50),
-        TextButton(
-          onPressed: () => playGame(),
-          child: Text('Play'),
-          style: TextButton.styleFrom(
-            primary: Colors.white,
-            side: BorderSide(color: Colors.white),
-            textStyle: TextStyle(fontSize: 22),
-            minimumSize: Size(100, 40),
+        UpToDownFadeAnim(
+          milliSecond: 3000,
+          child: TextButton(
+            onPressed: () => playGame(),
+            child: Text('Play'),
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.white,
+              side: BorderSide(color: Colors.white),
+              textStyle: TextStyle(fontSize: 22),
+              minimumSize: Size(100, 40),
+            ),
           ),
         ),
       ],
@@ -202,26 +225,24 @@ class _LoginPageState extends State<LoginPage> {
 
   void playGame() {
     setState(() {
-      player1 = player1Crtl.text.toString();
-      player2 = player2Crtl.text.toString();
-
-      if (player1 == '' || player2 == '') {
-        error = 'Please enter your name!!';
-      } else if (player1 == player2) {
-        error = 'Do NOT use same name!!';
-      }else{
-        error = null;
-      }
-
-      if(difficult != null && error == null) {
+      if (difficultSelected != -1 && edtFormKey.currentState!.validate()) {
         Navigator.push(
           context,
-          MaterialPageRoute(
-            builder: (context) => GamePage(
-              player1: player1!,
-              player2: player2!,
-              difficult: difficult!,
+          PageRouteBuilder(
+            pageBuilder: (context, animation, secondaryAnimation) => GamePage(
+              player1: edtP1Ctrl.text,
+              player2: edtP2Ctrl.text,
+              difficult: difficultSelected,
             ),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+              return SlideTransition(
+                position:
+                    Tween<Offset>(begin: Offset(1.0, 0.0), end: Offset.zero)
+                        .animate(animation),
+                child: child,
+              );
+            },
           ),
         );
       }
