@@ -3,7 +3,10 @@ Tic Tac Toe game with 3 diffrence difficulty.
 
 # Packages used
 1-audioplayers
+
 2-flutter_staggered_animation
+
+3-GetX for State Management
 
 # Videos
 https://user-images.githubusercontent.com/98664397/184476212-c077a5ca-21db-44b5-827e-09b7da19e34b.mp4
