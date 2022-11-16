@@ -25,8 +25,8 @@ class _ScaleAnimState extends State<ScaleAnim>
 
   @override
   void dispose() {
-    super.dispose();
     animCtrl.dispose();
+    super.dispose();
   }
 
   @override

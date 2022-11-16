@@ -37,8 +37,8 @@ class _UpToDownFadeAnimState extends State<UpToDownFadeAnim>
 
   @override
   void dispose() {
-    super.dispose();
     animCtrl.dispose();
+    super.dispose();
   }
 
   @override

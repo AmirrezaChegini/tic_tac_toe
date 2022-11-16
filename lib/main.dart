@@ -1,5 +1,6 @@
-import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:tic_tac_toe/controller/app_ctrl.dart';
 import 'package:tic_tac_toe/pages/login_page.dart';
 import 'package:flutter/services.dart';
 
@@ -13,19 +14,11 @@ void main() {
 }
 
 class Main extends StatelessWidget {
-  final AudioPlayer audioPlayer = AudioPlayer();
-
-  void playMusic() async {
-    await audioPlayer.setSource(AssetSource('sounds/carefree.mp3'));
-    while (true) {
-      await audioPlayer.resume();
-    }
-  }
+  final appCtrl = Get.put(AppCtrl());
 
   @override
   Widget build(BuildContext context) {
-    playMusic();
-    return MaterialApp(
+    return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       home: LoginPage(),
     );

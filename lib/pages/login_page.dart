@@ -1,43 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:tic_tac_toe/anim/up_to_down_fade_anim.dart';
+import 'package:tic_tac_toe/controller/app_ctrl.dart';
 import 'package:tic_tac_toe/pages/game_page.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
-
-  @override
-  State<LoginPage> createState() => _LoginPageState();
-}
-
-class _LoginPageState extends State<LoginPage> {
-  var edtP1Ctrl = TextEditingController();
-  var edtP2Ctrl = TextEditingController();
-  final edtFormKey = GlobalKey<FormState>();
-  List<String> difficulty = ['Easy', 'Medium', 'Hard'];
-  int difficultSelected = -1;
-  List<IconData> cardIcons = [
-    Icons.circle_outlined,
-    Icons.circle_outlined,
-    Icons.circle_outlined
-  ];
-
-  @override
-  void dispose() {
-    super.dispose();
-
-    edtP1Ctrl.dispose();
-    edtP2Ctrl.dispose();
-  }
+class LoginPage extends StatelessWidget {
+  final appCtrl = Get.put(AppCtrl());
+  final List<String> difficulty = ['Easy', 'Medium', 'Hard'];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: _getBody(),
+      body: _getBody(context),
     );
   }
 
-  Widget _getBody() {
+  Widget _getBody(BuildContext context) {
     return DecoratedBox(
       position: DecorationPosition.background,
       decoration: BoxDecoration(
@@ -77,7 +56,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
             SizedBox(height: 10),
-            _getPlayStyle(),
+            _getPlayStyle(context),
           ],
         ),
       ),
@@ -86,13 +65,13 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _getEdtPlayerForm() {
     return Form(
-      key: edtFormKey,
+      key: appCtrl.edtFormKey,
       child: Column(
         children: [
           UpToDownFadeAnim(
             milliSecond: 1000,
             child: TextFormField(
-              controller: edtP1Ctrl,
+              controller: appCtrl.edtP1Ctrl,
               cursorColor: Colors.white,
               keyboardType: TextInputType.name,
               style: TextStyle(
@@ -129,7 +108,7 @@ class _LoginPageState extends State<LoginPage> {
           UpToDownFadeAnim(
             milliSecond: 1500,
             child: TextFormField(
-              controller: edtP2Ctrl,
+              controller: appCtrl.edtP2Ctrl,
               cursorColor: Colors.white,
               keyboardType: TextInputType.name,
               style: TextStyle(
@@ -140,7 +119,8 @@ class _LoginPageState extends State<LoginPage> {
                 labelText: 'Player 2',
                 labelStyle: TextStyle(color: Colors.white),
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white),
+                  borderSide:
+                      BorderSide(color: Color.fromRGBO(255, 255, 255, 1)),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(
@@ -157,7 +137,7 @@ class _LoginPageState extends State<LoginPage> {
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Please enter your name!!';
-                } else if (value == edtP1Ctrl.text) {
+                } else if (value == appCtrl.edtP1Ctrl.text) {
                   return 'Choose different name!!';
                 }
                 return null;
@@ -170,7 +150,7 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Widget _getPlayStyle() {
+  Widget _getPlayStyle(BuildContext context) {
     return Column(
       children: [
         ...List.generate(
@@ -186,19 +166,19 @@ class _LoginPageState extends State<LoginPage> {
                   border: Border.all(color: Colors.white),
                   borderRadius: BorderRadius.circular(4),
                 ),
-                child: ListTile(
-                  onTap: () {
-                    setState(() {
-                      difficultSelected = index;
-                    });
-                  },
-                  title: Text(difficulty[index]),
-                  textColor: Colors.white,
-                  trailing: Icon(
-                    difficultSelected == index
-                        ? Icons.circle
-                        : Icons.circle_outlined,
-                    color: Colors.white,
+                child: Obx(
+                  () => ListTile(
+                    onTap: () {
+                      appCtrl.difficultSelected.value = index;
+                    },
+                    title: Text(difficulty[index]),
+                    textColor: Colors.white,
+                    trailing: Icon(
+                      appCtrl.difficultSelected.value == index
+                          ? Icons.circle
+                          : Icons.circle_outlined,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),
@@ -209,7 +189,7 @@ class _LoginPageState extends State<LoginPage> {
         UpToDownFadeAnim(
           milliSecond: 3000,
           child: TextButton(
-            onPressed: () => playGame(),
+            onPressed: () => playGame(context),
             child: Text('Play'),
             style: TextButton.styleFrom(
               foregroundColor: Colors.white,
@@ -223,29 +203,22 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  void playGame() {
-    setState(() {
-      if (difficultSelected != -1 && edtFormKey.currentState!.validate()) {
-        Navigator.push(
-          context,
-          PageRouteBuilder(
-            pageBuilder: (context, animation, secondaryAnimation) => GamePage(
-              player1: edtP1Ctrl.text,
-              player2: edtP2Ctrl.text,
-              difficult: difficultSelected,
-            ),
-            transitionsBuilder:
-                (context, animation, secondaryAnimation, child) {
-              return SlideTransition(
-                position:
-                    Tween<Offset>(begin: Offset(1.0, 0.0), end: Offset.zero)
-                        .animate(animation),
-                child: child,
-              );
-            },
-          ),
-        );
-      }
-    });
+  void playGame(BuildContext context) {
+    if (appCtrl.difficultSelected.value != 4 &&
+        appCtrl.edtFormKey.currentState!.validate()) {
+      Navigator.push(
+        context,
+        PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) => GamePage(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return SlideTransition(
+              position: Tween<Offset>(begin: Offset(1.0, 0.0), end: Offset.zero)
+                  .animate(animation),
+              child: child,
+            );
+          },
+        ),
+      );
+    }
   }
 }

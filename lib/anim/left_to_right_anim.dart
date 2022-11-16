@@ -35,8 +35,8 @@ class _LeftToRightAnimState extends State<LeftToRightAnim>
 
   @override
   void dispose() {
-    super.dispose();
     animCtrl.dispose();
+    super.dispose();
   }
 
   @override
