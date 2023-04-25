@@ -2,11 +2,11 @@
 tic tac toe game with flutter
 
 # packages
-1- flutter_staggered_animations: ^1.1.1
+1- flutter_staggered_animations
 
-2- delayed_widget: ^1.1.2
+2- delayed_widget
   
-3- get: ^4.6.5
+3- get
 
 # screen-shots
 <image src="https://user-images.githubusercontent.com/98664397/234244139-3598359d-be63-49d9-a05b-81112a724467.png" width=300 height=600> <image src="https://user-images.githubusercontent.com/98664397/234244161-160d35c9-ba92-4aa9-b29f-693b994641b3.png" width=300 height=600>
